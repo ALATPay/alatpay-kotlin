@@ -1,0 +1,73 @@
+android {
+    compileSdkVersion 33
+    buildFeatures {
+        buildConfig = true
+    }
+    defaultConfig {
+        minSdk 21
+        targetSdk 33
+        vectorDrawables {
+            useSupportLibrary true
+        }
+
+        configurations {
+            implementation.exclude module:'proto-google-common-protos'
+            implementation.exclude module:'protolite-well-known-types'
+            implementation.exclude module:'protobuf-lite'
+        }
+        flavorDimensions "build"
+        productFlavors {
+//            release {
+//                dimension "build"
+//                buildConfigField ("String", "ENV", '"prod"')
+//                buildConfigField ("String", "DEV_CHECKOUT_URL", '"XXXXXXXXXXXXXXX"')
+//                buildConfigField ("String", "STAGING_CHECKOUT_URL", '"XXXXXXXXXXXXXXX"')
+//                buildConfigField ("String", "PROD_CHECKOUT_URL", '"XXXXXXXXXXXXXXX"')
+//            }
+            prod {
+                dimension "build"
+                buildConfigField ("String", "ENV", '"prod"')
+                buildConfigField ("String", "DEV_CHECKOUT_URL", '"https://alatpay-client.azurewebsites.net/js/alatpay.js"')
+                buildConfigField ("String", "STAGING_CHECKOUT_URL", '"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js"')
+                buildConfigField ("String", "PROD_CHECKOUT_URL", '"https://alatpay.ng/js/alatpay.js"')
+                buildConfigField ("String", "BASE_URL", '"https://alatpay.ng"')
+                buildConfigField ("String", "SIGNING_KEY_ID", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SIGNING_PASSWORD", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SIGNING_KEY", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "OSSRH_USERNAME", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "OSSRH_PASSWORD", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", '"XXXXXXXXXXXXXXX"')
+            }
+            staging {
+                dimension "build"
+                buildConfigField ("String", "ENV", '"staging"')
+                buildConfigField ("String", "ENV", '"prod"')
+                buildConfigField ("String", "DEV_CHECKOUT_URL", '"https://alatpay-client.azurewebsites.net/js/alatpay.js"')
+                buildConfigField ("String", "STAGING_CHECKOUT_URL", '"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js"')
+                buildConfigField ("String", "PROD_CHECKOUT_URL", '"https://alatpay.ng/js/alatpay.js"')
+                buildConfigField ("String", "BASE_URL", '"https://alatpay-client-sandbox.azurewebsites.net"')
+                buildConfigField ("String", "SIGNING_KEY_ID", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SIGNING_PASSWORD", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SIGNING_KEY", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "OSSRH_USERNAME", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "OSSRH_PASSWORD", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", '"XXXXXXXXXXXXXXX"')
+            }
+            dev {
+                dimension "build"
+                buildConfigField ("String", "ENV", '"dev"')
+                buildConfigField ("String", "ENV", '"prod"')
+                buildConfigField ("String", "DEV_CHECKOUT_URL", '"https://alatpay-client.azurewebsites.net/js/alatpay.js"')
+                buildConfigField ("String", "STAGING_CHECKOUT_URL", '"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js"')
+                buildConfigField ("String", "PROD_CHECKOUT_URL", '"https://alatpay.ng/js/alatpay.js"')
+                buildConfigField ("String", "BASE_URL", '"https://alatpay-client.azurewebsites.net"')
+                buildConfigField ("String", "SIGNING_KEY_ID", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SIGNING_PASSWORD", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SIGNING_KEY", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "OSSRH_USERNAME", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "OSSRH_PASSWORD", '"XXXXXXXXXXXXXXX"')
+                buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", '"XXXXXXXXXXXXXXX"')
+            }
+        }
+    }
+}
