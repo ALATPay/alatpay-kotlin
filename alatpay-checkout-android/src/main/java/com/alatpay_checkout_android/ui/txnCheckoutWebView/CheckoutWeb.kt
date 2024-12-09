@@ -91,7 +91,7 @@ fun CheckoutWebView(
     val result = (density.density * scaleFactor * 100).toInt()
 
     Box(
-        modifier = modifier.semantics { contentDescription = contentDesc }
+        modifier = modifier.fillMaxSize().semantics { contentDescription = contentDesc }
     ) {
         AndroidView(
             factory = {
@@ -101,7 +101,7 @@ fun CheckoutWebView(
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
 
-                    setInitialScale(result)
+//                    setInitialScale(result)
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
                     settings.allowFileAccess = true
@@ -343,7 +343,8 @@ fun CheckoutWebView(
                 if (errorGot) {
                     onReload()
                 }
-            }
+            },
+            modifier = Modifier.fillMaxSize()
         )
 
         if (newWindowResult != null) {

@@ -17,6 +17,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -88,6 +89,13 @@ class ALATPayCheckoutActivity : ComponentActivity() {
             val state = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
             val sheet = rememberBottomSheetScaffoldState(bottomSheetState = state)
 
+            val sheetState = rememberBottomSheetScaffoldState(
+                bottomSheetState = rememberStandardBottomSheetState(
+                    initialValue = SheetValue.Hidden,
+                    skipHiddenState = false
+                )
+            )
+
 
             val networkUiState by viewModel.uiNetworkState.collectAsState()
             val scope = rememberCoroutineScope()
@@ -110,14 +118,13 @@ class ALATPayCheckoutActivity : ComponentActivity() {
             var hasPageFinished by remember {
                 mutableStateOf(false)
             }
-            androidx.compose.material.BottomSheetScaffold(
+            androidx.compose.material3.BottomSheetScaffold(
                 sheetPeekHeight = 0.dp,
-                sheetGesturesEnabled = false,
                 sheetContent = {
                     Box(
-                        modifier = Modifier
-                            .fillMaxHeight(1f)
-                            .fillMaxWidth()
+                        modifier = Modifier.fillMaxSize()
+//                            .fillMaxHeight(1f)
+//                            .fillMaxWidth()
                     ) {
                         ErrorScreen(
                             title = stringResource(id = R.string.connection_failed),
@@ -135,10 +142,12 @@ class ALATPayCheckoutActivity : ComponentActivity() {
                         )
                     }
                 },
-                scaffoldState = sheet
+                scaffoldState = sheetState
             ) {
                 ScreenContent(
-                    modifier = Modifier.fillMaxHeight(1f),
+                    modifier = Modifier.fillMaxSize()
+//                        .fillMaxHeight(1f)
+                    ,
                     networkState = networkUiState.networkState,
                     hasLoaded = hasLoaded,
                     showNetworkBadge = showNetworkBadge,
@@ -200,7 +209,7 @@ class ALATPayCheckoutActivity : ComponentActivity() {
                     onHasLoaded(it)
                 },
                 onReload = onReload,
-                checkoutData = data?:ALATPayCheckoutParcel.default
+                checkoutData = data?:ALATPayCheckoutParcel.default,
 
             )
 
