@@ -97,7 +97,7 @@ fun CheckoutWebView(
     } else {
         configuration.screenWidthDp.toFloat() / 1000
     }
-    val result = (density.density * scaleFactor * 100).toInt()
+    val result = (density.density * scaleFactor * 109).toInt()
 
     // States to manage width and height dynamically
     var webViewWidth by remember { mutableStateOf(0) }
@@ -114,14 +114,16 @@ fun CheckoutWebView(
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
 
-//                    setInitialScale(result)
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.allowFileAccess = true
-                    settings.allowContentAccess = true
-                    settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                    settings.userAgentString =
-                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+
+                    settings.apply {
+                        javaScriptEnabled = true
+                        domStorageEnabled = true
+                        allowFileAccess = true
+                        allowContentAccess = true
+                        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                    }
 
                     // Referrer Policy
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
@@ -130,6 +132,7 @@ fun CheckoutWebView(
 
                     // Enable debugging for testing headers and CORS
                     WebView.setWebContentsDebuggingEnabled(true)
+
                     // Set WebChromeClient for handling JavaScript dialogs and logs
                     webChromeClient = object : WebChromeClient() {
                         override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
@@ -138,72 +141,7 @@ fun CheckoutWebView(
                         }
                     }
 
-
-//                    webChromeClient = object : WebChromeClient() {
-//                        override fun onCreateWindow(
-//                            view: WebView?,
-//                            isDialog: Boolean,
-//                            isUserGesture: Boolean,
-//                            resultMsg: Message?
-//                        ): Boolean {
-//                            newWindowResult = resultMsg
-//                            return true
-//                        }
-//
-//                        override fun onConsoleMessage(consoleMessage: ConsoleMessage?): Boolean {
-//                            Log.d("WebViewConsole", consoleMessage?.message() ?: "No message")
-//                            return true
-//                        }
-//
-//                    }
-
                     webViewClient = object : WebViewClient() {
-                        override fun shouldInterceptRequest(
-                            view: WebView?,
-                            request: WebResourceRequest?
-                        ): WebResourceResponse? {
-                            val customHeaders = mapOf(
-                                "accept" to "application/json",
-                                "accept-encoding" to "gzip, deflate, br, zstd",
-                                "accept-language" to "en-GB,en-ZA;q=0.9,en-US;q=0.8,en;q=0.7",
-                                "cache-control" to "force-cache",
-                                "connection" to "keep-alive",
-                                "content-type" to "application/json",
-//                                "origin" to BuildConfig.BASE_URL,
-//                                "referer" to BuildConfig.BASE_URL,
-                                "sec-ch-ua" to "\"Google Chrome\";v=\"131\", \"Chromium\";v=\"131\", \"Not_A Brand\";v=\"24\"",
-                                "sec-ch-ua-mobile" to "?0",
-//                                "sec-ch-ua-platform" to "\"Windows\"",
-                                "sec-fetch-dest" to "empty",
-                                "sec-fetch-mode" to "cors",
-                                "sec-fetch-site" to "cross-site"
-                            )
-
-                            // Intercept the request and add custom headers
-                            val newRequest = request?.let {
-                                val newUrl = it.url.toString()
-                                val newHeaders = HashMap(request.requestHeaders) // Copy original headers
-                                newHeaders.putAll(customHeaders) // Add the custom headers
-
-                                // Use WebResourceRequest to modify the request headers
-                                object : WebResourceRequest {
-                                    override fun getUrl(): Uri = Uri.parse(newUrl)
-                                    override fun isForMainFrame(): Boolean = it.isForMainFrame
-
-                                    @RequiresApi(Build.VERSION_CODES.N)
-                                    override fun isRedirect(): Boolean = it.isRedirect
-
-                                    override fun hasGesture(): Boolean = it.hasGesture()
-
-                                    override fun getMethod(): String = it.method
-                                    override fun getRequestHeaders(): Map<String, String> = newHeaders
-
-                                }
-                            }
-
-                            // Perform the request with custom headers
-                            return super.shouldInterceptRequest(view, newRequest)
-                        }
                         override fun onPageStarted(view: WebView, url: String?, favicon: Bitmap?) {
                             errorGot = false
                         }
@@ -211,63 +149,95 @@ fun CheckoutWebView(
                         override fun onPageFinished(view: WebView?, url: String?) {
                             onHasPageFinished(true)
                             onHasPageLoaded(true)
-                            // Inject JavaScript to resize the iframe dynamically
-                            view?.evaluateJavascript(
-                                """
-                            (function() {
-                                var iframes = document.getElementsByTagName('iframe');
-                                for (var i = 0; i < iframes.length; i++) {
-                                    var iframe = iframes[i];
-                                    iframe.style.width = '100%'; // Make width 100% of parent container
-                                    iframe.style.maxWidth = '100vw'; // Prevent overflow
-                                    iframe.style.boxSizing = 'border-box';
-                                    
-                                    // Adjust height proportionally to maintain aspect ratio
-                                    var naturalWidth = iframe.offsetWidth;
-                                    var naturalHeight = iframe.offsetHeight;
-                                    var aspectRatio = naturalHeight / naturalWidth;
-                                    
-                                    iframe.style.height = (iframe.offsetWidth * aspectRatio) + 'px';
-                                }
-                            })();
-                            """.trimIndent(), null
-                            )
-                        }
 
-//                        override fun shouldInterceptRequest(
-//                            view: WebView?,
-//                            request: WebResourceRequest?
-//                        ): WebResourceResponse? {
-//                            val url = request?.url.toString()
-//                            if (isBrowsableUrl(url)) {
-//                                try {
-//                                    // Open connection to the target URL
-//                                    val connection = URL(url).openConnection() as HttpURLConnection
-//                                    connection.setRequestProperty("Access-Control-Allow-Origin", "*")
-//                                    connection.setRequestProperty("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE")
-//                                    connection.setRequestProperty("Access-Control-Allow-Headers", "Content-Type, Authorization")
+                            setInitialScale(result)
+                            Log.d("Scalefactor", "Result: ${result}, scalefactor: ${scaleFactor}")
+
+//                            view?.evaluateJavascript(
+//                                """
+//                            function zoomIframeOnOverflow(iframe) {
+//                                const iframeWidth = iframe.offsetWidth;
+//                                const viewportWidth = window.innerWidth;
 //
-//                                    // Add subscription key or other headers if needed
-////                                    connection.setRequestProperty("Subscription-Key", "4401dcd8e06c4c768d2e30619767e86b")
-//
-//                                    // Read the response from the server
-//                                    val inputStream = connection.inputStream
-//                                    val contentType = connection.contentType ?: "application/json"
-//                                    val encoding = connection.contentEncoding ?: "UTF-8"
-//
-//                                    return WebResourceResponse(contentType, encoding, inputStream)
-//                                } catch (e: Exception) {
-//                                    e.printStackTrace()
+//                                if (iframeWidth > viewportWidth) {
+//                                    const scaleFactor = viewportWidth / iframeWidth;
+//                                    iframe.style.transform = 'scale(' + scaleFactor + ')';
+//                                    iframe.style.transformOrigin = 'top left';
+//                                } else {
+//                                    iframe.style.transform = 'none';
 //                                }
 //                            }
-//                            return super.shouldInterceptRequest(view, request)
-//                        }
+//
+//                            window.addEventListener('load', function() {
+//                                var iframes = document.getElementsByTagName('iframe');
+//                                for (var i = 0; i < iframes.length; i++) {
+//                                    var iframe = iframes[i];
+//                                    iframe.addEventListener('load', function() {
+//                                        zoomIframeOnOverflow(this);
+//                                    });
+//                                }
+//                            });
+//
+//                            window.addEventListener('resize', function() {
+//                                var iframes = document.getElementsByTagName('iframe');
+//                                for (var i = 0; i < iframes.length; i++) {
+//                                    var iframe = iframes[i];
+//                                    zoomIframeOnOverflow(iframe);
+//                                }
+//                            });
+//                            """.trimIndent(), null
+//                            )
+
+
+                            // Inject JavaScript to resize the iframe based on content
+//                            view?.evaluateJavascript(
+//                                """
+//                            function resizeIframe(iframe) {
+//                                iframe.height = iframe.contentDocument.body.scrollHeight + "px";
+//                            }
+//
+//                            // Automatically adjust the iframe size upon load
+//                            var iframes = document.getElementsByTagName('iframe');
+//                            for (var i = 0; i < iframes.length; i++) {
+//                                var iframe = iframes[i];
+//                                iframe.addEventListener('load', function() {
+//                                    resizeIframe(this);
+//                                });
+//                            }
+//                            """.trimIndent(), null
+//                            )
+                            // Inject JavaScript to resize the iframe dynamically
+//                            view?.evaluateJavascript(
+//                                """
+//                            (function() {
+//                                var iframes = document.getElementsByTagName('iframe');
+//                                for (var i = 0; i < iframes.length; i++) {
+//                                    var iframe = iframes[i];
+//                                    iframe.style.width = '80%'; // Make width 100% of parent container
+//                                    iframe.style.maxWidth = '100vw'; // Prevent overflow
+//                                    iframe.style.boxSizing = 'border-box';
+//                                    iframe.style.border = 'none';
+//
+//                                    // Ensure the iframe's height is calculated dynamically based on the aspect ratio
+//                                    var naturalWidth = iframe.offsetWidth;
+//                                    var naturalHeight = iframe.offsetHeight;
+//                                    var aspectRatio = naturalHeight / naturalWidth;
+//
+//                                    // Adjust the height proportionally to avoid overflow
+//                                    iframe.style.height = (naturalHeight * aspectRatio) + 'px';
+//                                    iframe.style.width = (naturalWidth * aspectRatio) + 'px';
+//
+//                                    // Prevent iframe overflow by ensuring the body and html are set to not overflow
+//                                    document.body.style.overflow = 'hidden';
+//                                    document.documentElement.style.overflow = 'hidden';
+//                                }
+//                            })();
+//                            """.trimIndent(), null
+//                            )
+                        }
 
                         override fun onReceivedError(
-                            view: WebView?,
-                            errorCode: Int,
-                            description: String?,
-                            failingUrl: String?
+                            view: WebView?, errorCode: Int, description: String?, failingUrl: String?
                         ) {
                             errorGot = errorCode == -2
                             super.onReceivedError(view, errorCode, description, failingUrl)
@@ -275,20 +245,10 @@ fun CheckoutWebView(
 
                         @RequiresApi(Build.VERSION_CODES.M)
                         override fun onReceivedError(
-                            view: WebView?,
-                            request: WebResourceRequest?,
-                            error: WebResourceError?
+                            view: WebView?, request: WebResourceRequest?, error: WebResourceError?
                         ) {
                             errorGot = error?.errorCode == -2
                             super.onReceivedError(view, request, error)
-
-                            // Check if this is for the main frame or a subresource
-                            if (request?.isForMainFrame == true) {
-                                val errorDescription =
-                                    error?.description?.toString() ?: "Unknown error"
-                                Log.e("WebViewError", "Error: $errorDescription")
-                                // Handle the error for the main frame (e.g., show an error page or message)
-                            }
                         }
                     }
 
@@ -305,15 +265,13 @@ fun CheckoutWebView(
                                     response,
                                     "Transaction Successful"
                                 )
-                            }
-                            else{
+                            } else {
                                 onResult(
                                     ALATPayConstants.AlatPayTransactionStatus.FAILED,
                                     response,
                                     "Transaction Failed"
                                 )
                             }
-
                         }
 
                         @JavascriptInterface
@@ -328,51 +286,60 @@ fun CheckoutWebView(
 
                     // Embed the HTML directly
                     val htmlContent = """
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            <meta name="referrer" content="strict-origin-when-cross-origin"> <!-- Referrer Policy set to strict-origin-when-cross-origin -->
-                            <title>ALATPay Checkout</title>
-                            <script src="${checkoutData.environment.getEnvironment()}"></script>
-                        </head>
-                        <body>
-                            <script>
-                                let popup = Alatpay.setup({
-                                    apiKey: "${checkoutData.key}",
-                                    businessId: "${checkoutData.businessId}",
-                                    email: "${checkoutData.customerEmail}",
-                                    phone: "${checkoutData.customerPhone}",
-                                    firstName: "${checkoutData.customerFirstName}",
-                                    lastName: "${checkoutData.customerLastName}",
-                                    metaData: "${checkoutData.reference}",
-                                    currency: "${checkoutData.currencyCode.ifEmpty { ALATPayConstants.Currency.NGN.currencyName }}",
-                                    amount: ${checkoutData.amount},
-                                    onTransaction: function (response) {
-                                        console.log("API response is ", response);
-                                        window.AndroidBridge.onTransaction(JSON.stringify(response));
-                                    },
-                                    onClose: function () {
-                                        console.log("Payment gateway is closed");
-                                        window.AndroidBridge.onClose();
-                                    }
-                                });
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <meta name="referrer" content="strict-origin-when-cross-origin">
+                        <title>ALATPay Checkout</title>
+                        <script src="${checkoutData.environment.getEnvironment()}"></script>
+                        <style>
+                            body, html {
+                                margin: 0;
+                                padding: 0;
+                                height: 100%;
+                                width: 100%;
+                                overflow: auto; /* Prevent overflow */
+                            }
+                            iframe {
+                                width: 100%;
+                                height: 100%;
+                                border: none;
+                                box-sizing: border-box;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <script>
+                            let popup = Alatpay.setup({
+                                apiKey: "${checkoutData.key}",
+                                businessId: "${checkoutData.businessId}",
+                                email: "${checkoutData.customerEmail}",
+                                phone: "${checkoutData.customerPhone}",
+                                firstName: "${checkoutData.customerFirstName}",
+                                lastName: "${checkoutData.customerLastName}",
+                                metaData: "${checkoutData.reference}",
+                                currency: "${checkoutData.currencyCode.ifEmpty { ALATPayConstants.Currency.NGN.currencyName }}",
+                                amount: ${checkoutData.amount},
+                                onTransaction: function (response) {
+                                    console.log("API response is ", response);
+                                    window.AndroidBridge.onTransaction(JSON.stringify(response));
+                                },
+                                onClose: function () {
+                                    console.log("Payment gateway is closed");
+                                    window.AndroidBridge.onClose();
+                                }
+                            });
 
-                                console.log("Popup setup completed");
-                                // Automatically show the payment popup
-                                popup.show();
-                                console.log("Popup.show() called");
-                            </script>
-                        </body>
-                        </html>
-                    """.trimIndent()
-
-//                    loadData(
-//                        htmlContent,
-//                        "text/html",
-//                        "UTF-8",
-//                    )
+                            console.log("Popup setup completed");
+                            // Automatically show the payment popup
+                            popup.show();
+                            console.log("Popup.show() called");
+                        </script>
+                    </body>
+                    </html>
+                """.trimIndent()
 
                     loadDataWithBaseURL(
                         BuildConfig.BASE_URL,
@@ -390,16 +357,7 @@ fun CheckoutWebView(
                     onReload()
                 }
             },
-            modifier = modifier.fillMaxWidth()
-                .wrapContentHeight()
-
-//                .then(
-//                if (webViewWidth > 0) Modifier.width(webViewWidth.dp) else Modifier.fillMaxWidth()
-//            )
-//                .then(
-//                    if (webViewHeight > 0) Modifier.height(webViewHeight.dp) else Modifier.fillMaxHeight()
-//                )
-
+            modifier = modifier.fillMaxSize()
         )
 
         if (newWindowResult != null) {
@@ -409,6 +367,8 @@ fun CheckoutWebView(
             )
         }
     }
+
+
 }
 
 
