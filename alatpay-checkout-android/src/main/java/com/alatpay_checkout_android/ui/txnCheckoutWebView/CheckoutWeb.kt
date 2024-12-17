@@ -36,7 +36,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.alatpay_checkout_android.utils.constants.ALATPayConstants
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
@@ -47,14 +52,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.unit.dp
 import com.alatpay_checkout_android.BuildConfig
 import com.alatpay_checkout_android.R
 import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
+import com.alatpay_checkout_android.data.models.TransactionResponse
 import com.alatpay_checkout_android.utils.getEnvironment
 import com.alatpay_checkout_android.utils.isBrowsableUrl
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import java.net.HttpURLConnection
 import java.net.URL
+import java.util.Locale
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -89,6 +98,10 @@ fun CheckoutWebView(
         configuration.screenWidthDp.toFloat() / 1000
     }
     val result = (density.density * scaleFactor * 100).toInt()
+
+    // States to manage width and height dynamically
+    var webViewWidth by remember { mutableStateOf(0) }
+    var webViewHeight by remember { mutableStateOf(0) }
 
     Box(
         modifier = modifier.fillMaxSize().semantics { contentDescription = contentDesc }
@@ -198,6 +211,27 @@ fun CheckoutWebView(
                         override fun onPageFinished(view: WebView?, url: String?) {
                             onHasPageFinished(true)
                             onHasPageLoaded(true)
+                            // Inject JavaScript to resize the iframe dynamically
+                            view?.evaluateJavascript(
+                                """
+                            (function() {
+                                var iframes = document.getElementsByTagName('iframe');
+                                for (var i = 0; i < iframes.length; i++) {
+                                    var iframe = iframes[i];
+                                    iframe.style.width = '100%'; // Make width 100% of parent container
+                                    iframe.style.maxWidth = '100vw'; // Prevent overflow
+                                    iframe.style.boxSizing = 'border-box';
+                                    
+                                    // Adjust height proportionally to maintain aspect ratio
+                                    var naturalWidth = iframe.offsetWidth;
+                                    var naturalHeight = iframe.offsetHeight;
+                                    var aspectRatio = naturalHeight / naturalWidth;
+                                    
+                                    iframe.style.height = (iframe.offsetWidth * aspectRatio) + 'px';
+                                }
+                            })();
+                            """.trimIndent(), null
+                            )
                         }
 
 //                        override fun shouldInterceptRequest(
@@ -263,11 +297,23 @@ fun CheckoutWebView(
                         @JavascriptInterface
                         fun onTransaction(response: String) {
                             Log.d("WebViewResponse", "Payload: $response")
-                            onResult(
-                                ALATPayConstants.AlatPayTransactionStatus.SUCCESS,
-                                response,
-                                "Transaction Successful"
-                            )
+                            val transactionResponse = Gson().fromJson(response, TransactionResponse::class.java)
+                            val isCompleted = transactionResponse?.data?.status?.lowercase() == "completed"
+                            if (transactionResponse?.status != null && !isCompleted) {
+                                onResult(
+                                    ALATPayConstants.AlatPayTransactionStatus.SUCCESS,
+                                    response,
+                                    "Transaction Successful"
+                                )
+                            }
+                            else{
+                                onResult(
+                                    ALATPayConstants.AlatPayTransactionStatus.FAILED,
+                                    response,
+                                    "Transaction Failed"
+                                )
+                            }
+
                         }
 
                         @JavascriptInterface
@@ -344,7 +390,16 @@ fun CheckoutWebView(
                     onReload()
                 }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = modifier.fillMaxWidth()
+                .wrapContentHeight()
+
+//                .then(
+//                if (webViewWidth > 0) Modifier.width(webViewWidth.dp) else Modifier.fillMaxWidth()
+//            )
+//                .then(
+//                    if (webViewHeight > 0) Modifier.height(webViewHeight.dp) else Modifier.fillMaxHeight()
+//                )
+
         )
 
         if (newWindowResult != null) {
