@@ -123,6 +123,10 @@ fun CheckoutWebView(
                         allowContentAccess = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                         userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                        // Enable manual zoom controls
+                        builtInZoomControls = true // Enable zoom buttons (for older devices)
+                        displayZoomControls = false // Disable zoom controls on screen (optional)
+                        setSupportZoom(true)
                     }
 
                     // Referrer Policy
