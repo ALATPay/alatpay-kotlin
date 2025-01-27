@@ -16,7 +16,8 @@ data class ALATPayCheckoutParcel(
     val customerLastName: String,
     val reference: String,
     val isProdEnv: Boolean,
-    val environment: ALATPayConstants.Environment
+    val environment: ALATPayConstants.Environment,
+    val themeColor : String,
 ): Parcelable{
     companion object{
         val default = ALATPayCheckoutParcel(
@@ -29,7 +30,8 @@ data class ALATPayCheckoutParcel(
             customerLastName = "",
             reference = "",
             isProdEnv = false,
-            environment = ALATPayConstants.Environment.DEV
+            environment = ALATPayConstants.Environment.DEV,
+            themeColor = ""
         )
     }
 
@@ -45,7 +47,8 @@ data class ALATPayCheckoutParcel(
         var customerLastName: String = "",
         var reference: String = "",
         var isProdEnv: Boolean = false,
-        var environment: ALATPayConstants.Environment = ALATPayConstants.Environment.DEV
+        var environment: ALATPayConstants.Environment = ALATPayConstants.Environment.DEV,
+        var themeColor: String = ""
     ){
         fun setAmount(amount: Double) = apply { this.amount = amount }
         fun setCurrencyCode(currencyCode: ALATPayConstants.Currency) = apply { this.currencyCode = currencyCode.currencyName }
@@ -57,8 +60,8 @@ data class ALATPayCheckoutParcel(
         fun setCustomerLastName(customerLastName: String) = apply { this.customerLastName = customerLastName }
         fun setReference(reference: String) = apply { this.reference = reference }
         fun setIsProdEnv(isProdEnv: Boolean) = apply { this.isProdEnv = isProdEnv }
-
         fun setEnvironment(env: ALATPayConstants.Environment) = apply { this.environment = env }
+        fun setThemeColor(themeColor: String) = apply { this.themeColor = themeColor }
 
         fun build() = ALATPayCheckoutParcel(
             amount = amount,
@@ -71,7 +74,8 @@ data class ALATPayCheckoutParcel(
             isProdEnv = isProdEnv,
             environment = environment,
             businessId = businessId,
-            customerPhone = customerPhone
+            customerPhone = customerPhone,
+            themeColor = themeColor
         )
     }
 }

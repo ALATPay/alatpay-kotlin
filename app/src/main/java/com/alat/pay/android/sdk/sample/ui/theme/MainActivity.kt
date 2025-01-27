@@ -107,6 +107,7 @@ class MainActivity : ComponentActivity() {
                 .setEnvironment(ALATPayConstants.Environment.PROD)
                 .setCustomerFirsName("Seun")
                 .setCustomerLastName("Ajibade")
+                .setThemeColor("#ca489e")
                 .setCustomerEmail("ajibadeseun@gmail.com")
                 .setCurrencyCode(ALATPayConstants.Currency.NGN)
                 .setReference(ref)

@@ -37,7 +37,8 @@ internal fun ALATPayCheckoutParcel.toSerialize(): ALATPayCheckout {
         reference = reference,
         environment = environment,
         businessId = businessId,
-        customerPhone = customerPhone
+        customerPhone = customerPhone,
+        themeColor = themeColor
     )
 }
 
@@ -78,6 +79,11 @@ internal fun validateRequest(
 
     if (!TxnCheckoutValidators.validateCustomerFirstName(name = alatPayCheckout.customerFirstName,)) {
         onInitializeError(Constants.Error.INVALID_CUSTOMER_FIRST_NAME)
+        return true
+    }
+
+    if(alatPayCheckout.themeColor.isNotEmpty() && !TxnCheckoutValidators.isValidHexColor(hex = alatPayCheckout.themeColor) ){
+        onInitializeError(Constants.Error.INVALID_HEX_COLOR_CODE)
         return true
     }
 

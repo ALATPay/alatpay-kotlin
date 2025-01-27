@@ -13,6 +13,7 @@ object Constants {
         const val INVALID_AMOUNT = "Amount is Invalid"
         const val API_KEY_REQUIRED = "API KEY is Required"
         const val INVALID_CUSTOMER_FIRST_NAME = "Customer First Name is Invalid"
+        const val INVALID_HEX_COLOR_CODE = "Hex color code is Invalid"
         const val INVALID_CUSTOMER_LAST_NAME = "Customer Last Name is Invalid"
         const val INVALID_CUSTOMER_EMAIL = "Customer Email is Invalid"
         const val CUSTOMER_EMAIL_REQUIRED = "Customer Email is Required"

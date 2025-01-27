@@ -117,6 +117,11 @@ object TxnCheckoutValidators {
         return false
     }
 
+    fun isValidHexColor(hex: String): Boolean {
+        val regex = Regex("^#([a-fA-F0-9]{3}|[a-fA-F0-9]{4}|[a-fA-F0-9]{6}|[a-fA-F0-9]{8})$")
+        return regex.matches(hex)
+    }
+
     fun validateApiKey(apiKey: String): Boolean {
         if (apiKey.isEmpty()) {
             return false

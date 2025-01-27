@@ -13,5 +13,6 @@ data class ALATPayCheckout(
     val customerFirstName: String,
     val customerLastName: String,
     val reference: String,
-    val environment: ALATPayConstants.Environment
+    val environment: ALATPayConstants.Environment,
+    val themeColor: String
 )

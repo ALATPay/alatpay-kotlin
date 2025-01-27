@@ -104,7 +104,9 @@ fun CheckoutWebView(
     var webViewHeight by remember { mutableStateOf(0) }
 
     Box(
-        modifier = modifier.fillMaxSize().semantics { contentDescription = contentDesc }
+        modifier = modifier
+            .fillMaxSize()
+            .semantics { contentDescription = contentDesc }
     ) {
         AndroidView(
             factory = {
@@ -122,7 +124,8 @@ fun CheckoutWebView(
                         allowFileAccess = true
                         allowContentAccess = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        userAgentString = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+                        userAgentString =
+                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
                         // Enable manual zoom controls
                         builtInZoomControls = true // Enable zoom buttons (for older devices)
                         displayZoomControls = false // Disable zoom controls on screen (optional)
@@ -241,7 +244,10 @@ fun CheckoutWebView(
                         }
 
                         override fun onReceivedError(
-                            view: WebView?, errorCode: Int, description: String?, failingUrl: String?
+                            view: WebView?,
+                            errorCode: Int,
+                            description: String?,
+                            failingUrl: String?
                         ) {
                             errorGot = errorCode == -2
                             super.onReceivedError(view, errorCode, description, failingUrl)
@@ -261,8 +267,10 @@ fun CheckoutWebView(
                         @JavascriptInterface
                         fun onTransaction(response: String) {
                             Log.d("WebViewResponse", "Payload: $response")
-                            val transactionResponse = Gson().fromJson(response, TransactionResponse::class.java)
-                            val isCompleted = transactionResponse?.data?.status?.lowercase() == "completed"
+                            val transactionResponse =
+                                Gson().fromJson(response, TransactionResponse::class.java)
+                            val isCompleted =
+                                transactionResponse?.data?.status?.lowercase() == "completed"
                             if (transactionResponse?.status != null && !isCompleted) {
                                 onResult(
                                     ALATPayConstants.AlatPayTransactionStatus.SUCCESS,
@@ -290,60 +298,62 @@ fun CheckoutWebView(
 
                     // Embed the HTML directly
                     val htmlContent = """
-                    <!DOCTYPE html>
-                    <html lang="en">
-                    <head>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        <meta name="referrer" content="strict-origin-when-cross-origin">
-                        <title>ALATPay Checkout</title>
-                        <script src="${checkoutData.environment.getEnvironment()}"></script>
-                        <style>
-                            body, html {
-                                margin: 0;
-                                padding: 0;
-                                height: 100%;
-                                width: 100%;
-                                overflow: auto; /* Prevent overflow */
-                            }
-                            iframe {
-                                width: 100%;
-                                height: 100%;
-                                border: none;
-                                box-sizing: border-box;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <script>
-                            let popup = Alatpay.setup({
-                                apiKey: "${checkoutData.key}",
-                                businessId: "${checkoutData.businessId}",
-                                email: "${checkoutData.customerEmail}",
-                                phone: "${checkoutData.customerPhone}",
-                                firstName: "${checkoutData.customerFirstName}",
-                                lastName: "${checkoutData.customerLastName}",
-                                metaData: "${checkoutData.reference}",
-                                currency: "${checkoutData.currencyCode.ifEmpty { ALATPayConstants.Currency.NGN.currencyName }}",
-                                amount: ${checkoutData.amount},
-                                onTransaction: function (response) {
-                                    console.log("API response is ", response);
-                                    window.AndroidBridge.onTransaction(JSON.stringify(response));
-                                },
-                                onClose: function () {
-                                    console.log("Payment gateway is closed");
-                                    window.AndroidBridge.onClose();
-                                }
-                            });
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="referrer" content="strict-origin-when-cross-origin">
+        <title>ALATPay Checkout</title>
+        <script src="${checkoutData.environment.getEnvironment()}"></script>
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                overflow: auto; /* Prevent overflow */
+            }
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+                box-sizing: border-box;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            let popup = Alatpay.setup({
+                apiKey: "${checkoutData.key}",
+                businessId: "${checkoutData.businessId}",
+                email: "${checkoutData.customerEmail}",
+                phone: "${checkoutData.customerPhone}",
+                firstName: "${checkoutData.customerFirstName}",
+                lastName: "${checkoutData.customerLastName}",
+                metaData: "${checkoutData.reference}",
+                currency: "${checkoutData.currencyCode.ifEmpty { ALATPayConstants.Currency.NGN.currencyName }}",
+                amount: ${checkoutData.amount},
+                ${if (checkoutData.themeColor.isNotEmpty()) "color: \"${checkoutData.themeColor}\"," else ""}
+                onTransaction: function (response) {
+                    console.log("API response is ", response);
+                    window.AndroidBridge.onTransaction(JSON.stringify(response));
+                },
+                onClose: function () {
+                    console.log("Payment gateway is closed");
+                    window.AndroidBridge.onClose();
+                }
+            });
 
-                            console.log("Popup setup completed");
-                            // Automatically show the payment popup
-                            popup.show();
-                            console.log("Popup.show() called");
-                        </script>
-                    </body>
-                    </html>
-                """.trimIndent()
+            console.log("Popup setup completed");
+            // Automatically show the payment popup
+            popup.show();
+            console.log("Popup.show() called");
+        </script>
+    </body>
+    </html>
+""".trimIndent()
+
 
                     loadDataWithBaseURL(
                         BuildConfig.BASE_URL,
