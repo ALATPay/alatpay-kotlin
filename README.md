@@ -124,5 +124,3 @@ fun GreetingPreview() {
 
 ## License
 This SDK is provided under the **MIT License**.
-
-For further details, please refer to our [official documentation](#).
