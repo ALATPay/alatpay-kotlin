@@ -40,7 +40,7 @@ class ALATPayCheckoutViewModel constructor() : ViewModel() {
                 ALATPayConstants.Environment.STAGING -> BuildConfig.STAGING_CHECKOUT_URL
                 ALATPayConstants.Environment.PROD -> BuildConfig.PROD_CHECKOUT_URL
             },
-            isProdEnv = checkout.isProdEnv,
+//            isProdEnv = checkout.isProdEnv,
             parcelData = checkout
         )
     }

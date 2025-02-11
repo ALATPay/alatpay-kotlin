@@ -11,8 +11,10 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.webkit.WebView
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
@@ -218,7 +220,7 @@ class ALATPayCheckoutActivity : ComponentActivity() {
             }
 
             data?.let {
-                if (!it.isProdEnv) {
+                if (it.environment != ALATPayConstants.Environment.PROD) {
                     DiagonalDebugLabel()
                 }
             }
@@ -246,11 +248,11 @@ class ALATPayCheckoutActivity : ComponentActivity() {
             )
         }
 
-//        BackHandler(enabled = backEnabled) {
-//            if (networkState) {
-//                webView?.goBack()
-//            }
-//        }
+        BackHandler(enabled = backEnabled) {
+            if (networkState) {
+                webView?.goBack()
+            }
+        }
     }
 
     private fun redirectBackToApp(

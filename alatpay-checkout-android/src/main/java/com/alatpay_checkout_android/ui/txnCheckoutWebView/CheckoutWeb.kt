@@ -14,34 +14,25 @@
 package com.alatpay_checkout_android.ui.txnCheckoutWebView
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
 import android.os.Build
 import android.os.Message
 import android.util.Log
+import android.view.Gravity
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.*
 import android.webkit.WebView.WebViewTransport
+import android.widget.FrameLayout
+import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.viewinterop.AndroidView
-import com.alatpay_checkout_android.utils.constants.ALATPayConstants
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
@@ -52,18 +43,24 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat.getSystemService
 import com.alatpay_checkout_android.BuildConfig
 import com.alatpay_checkout_android.R
 import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
 import com.alatpay_checkout_android.data.models.TransactionResponse
+import com.alatpay_checkout_android.utils.constants.ALATPayConstants
 import com.alatpay_checkout_android.utils.getEnvironment
-import com.alatpay_checkout_android.utils.isBrowsableUrl
 import com.google.gson.Gson
-import kotlinx.coroutines.launch
-import java.net.HttpURLConnection
-import java.net.URL
-import java.util.Locale
+
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -103,8 +100,12 @@ fun CheckoutWebView(
     var webViewWidth by remember { mutableStateOf(0) }
     var webViewHeight by remember { mutableStateOf(0) }
 
+    BackHandler {
+        onBackEnabled(true)
+    }
+
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .semantics { contentDescription = contentDesc }
     ) {
@@ -115,21 +116,32 @@ fun CheckoutWebView(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT
                     )
+//                    layoutParams = FrameLayout.LayoutParams(
+//                        ViewGroup.LayoutParams.MATCH_PARENT,
+//                        ViewGroup.LayoutParams.MATCH_PARENT
+//                    ).apply {
+//                        gravity = Gravity.CENTER
+//                    }
 
-
-
+//                    setInitialScale(1)
+//                    setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY)
+//                    setScrollbarFadingEnabled(false)
                     settings.apply {
                         javaScriptEnabled = true
                         domStorageEnabled = true
+                        loadWithOverviewMode = true
+                        useWideViewPort = true
+                        builtInZoomControls = true
+                        displayZoomControls = false
+                        supportMultipleWindows()
+                        javaScriptCanOpenWindowsAutomatically = true
                         allowFileAccess = true
                         allowContentAccess = true
                         mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        userAgentString =
-                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
-                        // Enable manual zoom controls
-                        builtInZoomControls = true // Enable zoom buttons (for older devices)
-                        displayZoomControls = false // Disable zoom controls on screen (optional)
-                        setSupportZoom(true)
+//                        userAgentString =
+//                            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+
+
                     }
 
                     // Referrer Policy
@@ -138,7 +150,7 @@ fun CheckoutWebView(
                     }
 
                     // Enable debugging for testing headers and CORS
-                    WebView.setWebContentsDebuggingEnabled(true)
+//                    WebView.setWebContentsDebuggingEnabled(true)
 
                     // Set WebChromeClient for handling JavaScript dialogs and logs
                     webChromeClient = object : WebChromeClient() {
@@ -153,94 +165,27 @@ fun CheckoutWebView(
                             errorGot = false
                         }
 
+                        override fun shouldOverrideUrlLoading(
+                            view: WebView?,
+                            request: WebResourceRequest?
+                        ): Boolean {
+                            val newUrl = request?.url.toString()
+                            println("🔍 WebView URL Changed: $newUrl")  // Debug log
+                            if (newUrl.startsWith("data:")) {
+                                // Load the data URI
+                                loadDataWithBaseURL(null, newUrl, "text/html", "UTF-8", null)
+
+                            }
+                            return super.shouldOverrideUrlLoading(view, request)
+                        }
+
                         override fun onPageFinished(view: WebView?, url: String?) {
                             onHasPageFinished(true)
                             onHasPageLoaded(true)
 
-                            setInitialScale(result)
-                            Log.d("Scalefactor", "Result: ${result}, scalefactor: ${scaleFactor}")
-
-//                            view?.evaluateJavascript(
-//                                """
-//                            function zoomIframeOnOverflow(iframe) {
-//                                const iframeWidth = iframe.offsetWidth;
-//                                const viewportWidth = window.innerWidth;
-//
-//                                if (iframeWidth > viewportWidth) {
-//                                    const scaleFactor = viewportWidth / iframeWidth;
-//                                    iframe.style.transform = 'scale(' + scaleFactor + ')';
-//                                    iframe.style.transformOrigin = 'top left';
-//                                } else {
-//                                    iframe.style.transform = 'none';
-//                                }
-//                            }
-//
-//                            window.addEventListener('load', function() {
-//                                var iframes = document.getElementsByTagName('iframe');
-//                                for (var i = 0; i < iframes.length; i++) {
-//                                    var iframe = iframes[i];
-//                                    iframe.addEventListener('load', function() {
-//                                        zoomIframeOnOverflow(this);
-//                                    });
-//                                }
-//                            });
-//
-//                            window.addEventListener('resize', function() {
-//                                var iframes = document.getElementsByTagName('iframe');
-//                                for (var i = 0; i < iframes.length; i++) {
-//                                    var iframe = iframes[i];
-//                                    zoomIframeOnOverflow(iframe);
-//                                }
-//                            });
-//                            """.trimIndent(), null
-//                            )
+//                            setInitialScale(result)
 
 
-                            // Inject JavaScript to resize the iframe based on content
-//                            view?.evaluateJavascript(
-//                                """
-//                            function resizeIframe(iframe) {
-//                                iframe.height = iframe.contentDocument.body.scrollHeight + "px";
-//                            }
-//
-//                            // Automatically adjust the iframe size upon load
-//                            var iframes = document.getElementsByTagName('iframe');
-//                            for (var i = 0; i < iframes.length; i++) {
-//                                var iframe = iframes[i];
-//                                iframe.addEventListener('load', function() {
-//                                    resizeIframe(this);
-//                                });
-//                            }
-//                            """.trimIndent(), null
-//                            )
-                            // Inject JavaScript to resize the iframe dynamically
-//                            view?.evaluateJavascript(
-//                                """
-//                            (function() {
-//                                var iframes = document.getElementsByTagName('iframe');
-//                                for (var i = 0; i < iframes.length; i++) {
-//                                    var iframe = iframes[i];
-//                                    iframe.style.width = '80%'; // Make width 100% of parent container
-//                                    iframe.style.maxWidth = '100vw'; // Prevent overflow
-//                                    iframe.style.boxSizing = 'border-box';
-//                                    iframe.style.border = 'none';
-//
-//                                    // Ensure the iframe's height is calculated dynamically based on the aspect ratio
-//                                    var naturalWidth = iframe.offsetWidth;
-//                                    var naturalHeight = iframe.offsetHeight;
-//                                    var aspectRatio = naturalHeight / naturalWidth;
-//
-//                                    // Adjust the height proportionally to avoid overflow
-//                                    iframe.style.height = (naturalHeight * aspectRatio) + 'px';
-//                                    iframe.style.width = (naturalWidth * aspectRatio) + 'px';
-//
-//                                    // Prevent iframe overflow by ensuring the body and html are set to not overflow
-//                                    document.body.style.overflow = 'hidden';
-//                                    document.documentElement.style.overflow = 'hidden';
-//                                }
-//                            })();
-//                            """.trimIndent(), null
-//                            )
                         }
 
                         override fun onReceivedError(
@@ -301,28 +246,11 @@ fun CheckoutWebView(
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="referrer" content="strict-origin-when-cross-origin">
-        <title>ALATPay Checkout</title>
-        <script src="${checkoutData.environment.getEnvironment()}"></script>
-        <style>
-            body, html {
-                margin: 0;
-                padding: 0;
-                height: 100%;
-                width: 100%;
-                overflow: auto; /* Prevent overflow */
-            }
-            iframe {
-                width: 100%;
-                height: 100%;
-                border: none;
-                box-sizing: border-box;
-            }
-        </style>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <title>Alatpay Payment</title>
     </head>
     <body>
+        <script src="${checkoutData.environment.getEnvironment()}"></script>
         <script>
             let popup = Alatpay.setup({
                 apiKey: "${checkoutData.key}",
@@ -345,14 +273,12 @@ fun CheckoutWebView(
                 }
             });
 
-            console.log("Popup setup completed");
-            // Automatically show the payment popup
             popup.show();
-            console.log("Popup.show() called");
         </script>
     </body>
     </html>
 """.trimIndent()
+
 
 
                     loadDataWithBaseURL(
@@ -371,7 +297,9 @@ fun CheckoutWebView(
                     onReload()
                 }
             },
-            modifier = modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
         )
 
         if (newWindowResult != null) {

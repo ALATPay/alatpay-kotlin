@@ -15,7 +15,7 @@ data class ALATPayCheckoutParcel(
     val customerFirstName: String,
     val customerLastName: String,
     val reference: String,
-    val isProdEnv: Boolean,
+//    val isProdEnv: Boolean,
     val environment: ALATPayConstants.Environment,
     val themeColor : String,
 ): Parcelable{
@@ -29,7 +29,7 @@ data class ALATPayCheckoutParcel(
             customerFirstName = "",
             customerLastName = "",
             reference = "",
-            isProdEnv = false,
+//            isProdEnv = false,
             environment = ALATPayConstants.Environment.DEV,
             themeColor = ""
         )
@@ -46,7 +46,7 @@ data class ALATPayCheckoutParcel(
         var customerFirstName: String = "",
         var customerLastName: String = "",
         var reference: String = "",
-        var isProdEnv: Boolean = false,
+//        var isProdEnv: Boolean = false,
         var environment: ALATPayConstants.Environment = ALATPayConstants.Environment.DEV,
         var themeColor: String = ""
     ){
@@ -59,7 +59,7 @@ data class ALATPayCheckoutParcel(
         fun setCustomerFirsName(customerFirstName: String) = apply { this.customerFirstName = customerFirstName }
         fun setCustomerLastName(customerLastName: String) = apply { this.customerLastName = customerLastName }
         fun setReference(reference: String) = apply { this.reference = reference }
-        fun setIsProdEnv(isProdEnv: Boolean) = apply { this.isProdEnv = isProdEnv }
+//        fun setIsProdEnv(isProdEnv: Boolean) = apply { this.isProdEnv = isProdEnv }
         fun setEnvironment(env: ALATPayConstants.Environment) = apply { this.environment = env }
         fun setThemeColor(themeColor: String) = apply { this.themeColor = themeColor }
 
@@ -71,7 +71,7 @@ data class ALATPayCheckoutParcel(
             customerFirstName = customerFirstName,
             customerLastName = customerLastName,
             reference = reference,
-            isProdEnv = isProdEnv,
+//            isProdEnv = isProdEnv,
             environment = environment,
             businessId = businessId,
             customerPhone = customerPhone,
