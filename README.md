@@ -5,8 +5,8 @@ A simple and efficient way to integrate ALATPay into your Android applications. 
 ## Test Data
 Use the following test credentials to perform live transactions:
 
-- **Live Test Business ID**: `2a3112a6-d303-4bb8-5921-08dcdbbb654a`
-- **Live API Key**: `4616217a2647473cabdcccb084531f4b`
+- **Live Test Business ID**: `your_bussiness_id`
+- **Live API Key**: `your_api_key`
 
 **Note:** This will debit your real account.
 
