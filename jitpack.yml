@@ -1,0 +1,6 @@
+jdk:
+  - openjdk11
+
+before_install:
+  # Ensure gradlew is executable (works on Unix-based systems, including JitPack's build environment)
+  - if [ -f ./gradlew ]; then chmod +x ./gradlew; fi
