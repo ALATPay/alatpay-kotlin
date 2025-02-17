@@ -9,7 +9,7 @@ plugins {
     `maven-publish`
 }
 // Versioning
-val libraryVersionName by extra { "1.0.0-alpha01" } // Update this for each release
+val libraryVersionName by extra { "1.0.0-alpha02" } // Update this for each release
 val libraryVersionCode by extra { 1 } // Update this for each release
 
 group = "com.github.ALATPay" // Use ALATPay GitHub username here
