@@ -1,11 +1,11 @@
 android {
-    compileSdkVersion 33
+
     buildFeatures {
         buildConfig = true
     }
     defaultConfig {
         minSdk 21
-        targetSdk 33
+        targetSdk 35
         vectorDrawables {
             useSupportLibrary true
         }

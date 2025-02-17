@@ -1,11 +1,91 @@
+import java.io.ByteArrayOutputStream
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 //    alias(libs.plugins.kotlin.parcelize)
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
-
+//    `maven-publish`
 }
+// Versioning
+val libraryVersionName by extra { "1.0.0" } // Update this for each release
+val libraryVersionCode by extra { 1 } // Update this for each release
+
+group = "com.github.ALATPay" // Use ALATPay GitHub username here
+version = libraryVersionName // Version should be updated with each release
+
+afterEvaluate {
+    tasks.withType<org.gradle.jvm.tasks.Jar>().configureEach {
+        archiveBaseName.set("alatpay-kotlin") // Replace with your library name
+    }
+}
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("release") {
+//            from(components["java"])
+//
+//            // Define POM metadata (optional, but recommended)
+//            pom {
+//                name.set("ALATPay Android Kotlin SDK")
+//                description.set("A simple and efficient way to integrate ALATPay into your Android applications using the Kotlin SDK. Easily accept payments and manage transactions")
+//                url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+//                licenses {
+//                    license {
+//                        name.set("The Apache License, Version 2.0")
+//                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id.set("ajibadeseun")
+//                        name.set("Seun Ajibade")
+//                        email.set("ajibadeseun@gmail.com")
+//                    }
+//                }
+//                scm {
+//                    connection.set("scm:git:git://github.com/ALATPay/alatpay-kotlin.git")
+//                    developerConnection.set("scm:git:ssh://github.com/ALATPay/alatpay-kotlin.git")
+//                    url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+//                }
+//            }
+//        }
+//    }
+//}
+
+// Git Tag Task (Cross-Platform)
+tasks.register("publishToJitPack") {
+    doLast {
+        val tagName = "v$libraryVersionName"
+        println("Creating Git tag: $tagName")
+
+        // Check for uncommitted changes
+        val status = ByteArrayOutputStream()
+        exec {
+            commandLine("git", "status", "--porcelain")
+            standardOutput = status
+            isIgnoreExitValue  = true // Allow the command to fail without crashing the build
+        }
+        if (status.toString().isNotEmpty()) {
+            throw GradleException("You have uncommitted changes. Please commit or stash them before publishing.")
+        }
+
+        // Create the Git tag
+        exec {
+            commandLine("git", "tag", "-a", tagName, "-m", "Release $tagName")
+        }
+
+        // Push the Git tag
+        exec {
+            commandLine("git", "push", "origin", tagName)
+        }
+
+        println("Git tag created and pushed successfully: $tagName")
+        println("JitPack will automatically build the library for this tag.")
+    }
+}
+
 apply(from = "local.gradle")
 android {
     namespace = "com.alatpay_checkout_android"
@@ -13,7 +93,6 @@ android {
 
     defaultConfig {
         minSdk = 21
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
