@@ -6,7 +6,7 @@ plugins {
 //    alias(libs.plugins.kotlin.parcelize)
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
-//    `maven-publish`
+    `maven-publish`
 }
 // Versioning
 val libraryVersionName by extra { "1.0.0" } // Update this for each release
@@ -21,38 +21,41 @@ afterEvaluate {
     }
 }
 
-//publishing {
-//    publications {
-//        create<MavenPublication>("release") {
-//            from(components["java"])
-//
-//            // Define POM metadata (optional, but recommended)
-//            pom {
-//                name.set("ALATPay Android Kotlin SDK")
-//                description.set("A simple and efficient way to integrate ALATPay into your Android applications using the Kotlin SDK. Easily accept payments and manage transactions")
-//                url.set("https://github.com/ALATPay/alatpay-kotlin.git")
-//                licenses {
-//                    license {
-//                        name.set("The Apache License, Version 2.0")
-//                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-//                    }
-//                }
-//                developers {
-//                    developer {
-//                        id.set("ajibadeseun")
-//                        name.set("Seun Ajibade")
-//                        email.set("ajibadeseun@gmail.com")
-//                    }
-//                }
-//                scm {
-//                    connection.set("scm:git:git://github.com/ALATPay/alatpay-kotlin.git")
-//                    developerConnection.set("scm:git:ssh://github.com/ALATPay/alatpay-kotlin.git")
-//                    url.set("https://github.com/ALATPay/alatpay-kotlin.git")
-//                }
-//            }
-//        }
-//    }
-//}
+publishing {
+    publications {
+        create<MavenPublication>("release") {
+            from(components["release"])
+            groupId = "com.github.ALATPay" // Replace with your GitHub username or organization
+            artifactId = "alatpay-kotlin" // Replace with your repository name
+            version = libraryVersionName// Replace with your version
+
+            // Define POM metadata (optional, but recommended)
+            pom {
+                name.set("ALATPay Android Kotlin SDK")
+                description.set("A simple and efficient way to integrate ALATPay into your Android applications using the Kotlin SDK. Easily accept payments and manage transactions")
+                url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("ajibadeseun")
+                        name.set("Seun Ajibade")
+                        email.set("ajibadeseun@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git://github.com/ALATPay/alatpay-kotlin.git")
+                    developerConnection.set("scm:git:ssh://github.com/ALATPay/alatpay-kotlin.git")
+                    url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+                }
+            }
+        }
+    }
+}
 
 // Git Tag Task (Cross-Platform)
 tasks.register("publishToJitPack") {

@@ -1,5 +1,5 @@
 jdk:
-  - openjdk11
+  - openjdk17
 
 before_install:
   # Ensure gradlew is executable (works on Unix-based systems, including JitPack's build environment)
