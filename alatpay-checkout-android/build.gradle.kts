@@ -239,7 +239,7 @@ afterEvaluate {
 //publishing {
 //    publications {
 //        create<MavenPublication>("release") {
-//            from(components.findByName("prodRelease") ?: error("Component 'prodRelease' not found!"))
+//            from(components["release"])
 //
 //            groupId = "com.github.ALATPay" // Replace with your GitHub username or organization
 //            artifactId = "alatpay-kotlin" // Replace with your repository name
