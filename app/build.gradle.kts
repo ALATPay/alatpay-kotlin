@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
 }
-apply(from = "local.gradle")
+//apply(from = "local.gradle")
 android {
     namespace = "com.alat.pay.android.sdk.sample"
     compileSdk = 35
@@ -21,6 +21,9 @@ android {
     }
 
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -37,6 +40,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        //buildConfig = true
         compose = true
     }
     composeOptions {
@@ -60,7 +64,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation (project (":alatpay-checkout-android"))
+//    implementation(project(":alatpay-checkout-android"))
+    implementation (project (path = ":alatpay-checkout-android", configuration = "prodDebugRuntimeElements"))
     implementation(libs.androidx.appcompat)
 //    implementation(libs.androidx.google.material)
     implementation(libs.androidx.activity)
