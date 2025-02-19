@@ -25,49 +25,49 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.alat.pay.android.sdk.sample.R
-import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
-import com.alatpay_checkout_android.data.models.ALATPayTransactionResponse
-import com.alatpay_checkout_android.utils.TxnCheckoutManager
-import com.alatpay_checkout_android.utils.constants.ALATPayConstants
+//import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
+//import com.alatpay_checkout_android.data.models.ALATPayTransactionResponse
+//import com.alatpay_checkout_android.utils.TxnCheckoutManager
+//import com.alatpay_checkout_android.utils.constants.ALATPayConstants
 
 class MainActivity : ComponentActivity() {
     //Result Launcher and receiver
-    private val startActivityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) {
-        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            it.data?.getParcelableExtra(
-                ALATPayConstants.IntentParams.ALAT_PAY_RESULT,
-                ALATPayTransactionResponse::class.java
-            )
-        } else {
-            it.data?.getParcelableExtra(
-                ALATPayConstants.IntentParams.ALAT_PAY_RESULT
-            )
-        }
-
-        if (it.resultCode == RESULT_OK && data != null) {
-
-            when (data.status) {
-                ALATPayConstants.AlatPayTransactionStatus.SUCCESS -> {
-//                    println(data.status)
-                    println("Success Payload: ${data.transactionPayload}" )
-//                    println(data.referenceId)
-                }
-
-                ALATPayConstants.AlatPayTransactionStatus.FAILED -> {
-//                    println(data.status)
-//                    println(data.message)
-//                    println(data.referenceId)
-                }
-                ALATPayConstants.AlatPayTransactionStatus.ABORTED -> {
-//                    println(data.status)
-//                    println(data.message)
-//                    println(data.referenceId)
-                }
-            }
-        }
-    }
+//    private val startActivityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
+//        ActivityResultContracts.StartActivityForResult()
+//    ) {
+//        val data = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            it.data?.getParcelableExtra(
+//                ALATPayConstants.IntentParams.ALAT_PAY_RESULT,
+//                ALATPayTransactionResponse::class.java
+//            )
+//        } else {
+//            it.data?.getParcelableExtra(
+//                ALATPayConstants.IntentParams.ALAT_PAY_RESULT
+//            )
+//        }
+//
+//        if (it.resultCode == RESULT_OK && data != null) {
+//
+//            when (data.status) {
+//                ALATPayConstants.AlatPayTransactionStatus.SUCCESS -> {
+////                    println(data.status)
+//                    println("Success Payload: ${data.transactionPayload}" )
+////                    println(data.referenceId)
+//                }
+//
+//                ALATPayConstants.AlatPayTransactionStatus.FAILED -> {
+////                    println(data.status)
+////                    println(data.message)
+////                    println(data.referenceId)
+//                }
+//                ALATPayConstants.AlatPayTransactionStatus.ABORTED -> {
+////                    println(data.status)
+////                    println(data.message)
+////                    println(data.referenceId)
+//                }
+//            }
+//        }
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,35 +95,35 @@ class MainActivity : ComponentActivity() {
     }
     private fun initiateSamplePayment(context: Context) {
         val ref = generateRandomString(16)
-        ref.run {
-//            println(this)
-            val alatPayCheckout = ALATPayCheckoutParcel
-                .Builder()
-                .setAmount(100.toDouble())
-//                .setApiKey("4401dcd8e06c4c768d2e30619767e86b")
-//                .setBusinessId("e3bdb74b-2076-4b24-6295-08db0815ccca")
-                .setApiKey("58f6f804345949e4b24b93b337fee7d2")
-                .setBusinessId("4eb6c2ff-934a-4afa-aa91-08dc69123c01")
-                .setEnvironment(ALATPayConstants.Environment.PROD)
-                .setCustomerFirsName("Seun")
-                .setCustomerLastName("Ajibade")
-                .setThemeColor("#ca489e")  // Set custom theme color as you wish, this field is optional
-                .setCustomerEmail("ajibadeseun@gmail.com")
-                .setCurrencyCode(ALATPayConstants.Currency.NGN)
-                .setReference(ref)
-                .build()
-
-
-
-            TxnCheckoutManager.initialize(
-                context,
-                alatPayCheckout,
-                startActivityResult,
-                onInitializeError = {
-                    Toast.makeText(context,it,Toast.LENGTH_LONG).show()
-                }
-            )
-        }
+//        ref.run {
+////            println(this)
+//            val alatPayCheckout = ALATPayCheckoutParcel
+//                .Builder()
+//                .setAmount(100.toDouble())
+////                .setApiKey("4401dcd8e06c4c768d2e30619767e86b")
+////                .setBusinessId("e3bdb74b-2076-4b24-6295-08db0815ccca")
+//                .setApiKey("58f6f804345949e4b24b93b337fee7d2")
+//                .setBusinessId("4eb6c2ff-934a-4afa-aa91-08dc69123c01")
+//                .setEnvironment(ALATPayConstants.Environment.PROD)
+//                .setCustomerFirsName("Seun")
+//                .setCustomerLastName("Ajibade")
+//                .setThemeColor("#ca489e")  // Set custom theme color as you wish, this field is optional
+//                .setCustomerEmail("ajibadeseun@gmail.com")
+//                .setCurrencyCode(ALATPayConstants.Currency.NGN)
+//                .setReference(ref)
+//                .build()
+//
+//
+//
+//            TxnCheckoutManager.initialize(
+//                context,
+//                alatPayCheckout,
+//                startActivityResult,
+//                onInitializeError = {
+//                    Toast.makeText(context,it,Toast.LENGTH_LONG).show()
+//                }
+//            )
+//        }
     }
     @Composable
     fun Greeting(name: String, modifier: Modifier = Modifier) {
