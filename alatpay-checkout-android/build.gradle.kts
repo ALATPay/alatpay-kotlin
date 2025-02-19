@@ -68,7 +68,7 @@ tasks.register("publishToJitPack") {
 
         // Push the Git tag
         exec {
-            commandLine("git", "push", "origin", tagName)
+            commandLine("git", "push", "alatpay-kotlin", tagName)
         }
 
         println("Git tag created and pushed successfully: $tagName")
