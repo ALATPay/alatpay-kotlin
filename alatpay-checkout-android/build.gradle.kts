@@ -1,61 +1,48 @@
 import java.io.ByteArrayOutputStream
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+//    alias(libs.plugins.android.library)
+//    alias(libs.plugins.kotlin.android)
 //    alias(libs.plugins.kotlin.parcelize)
+    id ("com.android.library")
+    id ("kotlin-android")
+    id ("maven-publish")
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
     `maven-publish`
 }
+
+tasks.register<Jar>("androidSourcesJar") {
+    archiveClassifier.set("sources")
+
+    if (project.plugins.hasPlugin("com.android.library")) {
+        // For Android libraries
+        from(android.sourceSets["main"].java.srcDirs)
+    } else {
+        // For pure Kotlin libraries
+        from(sourceSets["main"].java.srcDirs)
+    }
+}
+
+artifacts {
+    archives(tasks["androidSourcesJar"])
+}
+
 // Versioning
-val libraryVersionName by extra { "1.0.0-alpha02" } // Update this for each release
+val libraryVersionName by extra { "1.0.0" } // Update this for each release
 val libraryVersionCode by extra { 1 } // Update this for each release
 
 group = "com.github.ALATPay" // Use ALATPay GitHub username here
 version = libraryVersionName // Version should be updated with each release
 
-afterEvaluate {
-    tasks.withType<org.gradle.jvm.tasks.Jar>().configureEach {
-        archiveBaseName.set("alatpay-kotlin") // Replace with your library name
-    }
-}
-
-//publishing {
-//    publications {
-//        create<MavenPublication>("release") {
-//            from(components["release"])
-//            groupId = "com.github.ALATPay" // Replace with your GitHub username or organization
-//            artifactId = "alatpay-kotlin" // Replace with your repository name
-//            version = libraryVersionName// Replace with your version
-//
-//            // Define POM metadata (optional, but recommended)
-//            pom {
-//                name.set("ALATPay Android Kotlin SDK")
-//                description.set("A simple and efficient way to integrate ALATPay into your Android applications using the Kotlin SDK. Easily accept payments and manage transactions")
-//                url.set("https://github.com/ALATPay/alatpay-kotlin.git")
-//                licenses {
-//                    license {
-//                        name.set("The Apache License, Version 2.0")
-//                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-//                    }
-//                }
-//                developers {
-//                    developer {
-//                        id.set("ajibadeseun")
-//                        name.set("Seun Ajibade")
-//                        email.set("ajibadeseun@gmail.com")
-//                    }
-//                }
-//                scm {
-//                    connection.set("scm:git:git://github.com/ALATPay/alatpay-kotlin.git")
-//                    developerConnection.set("scm:git:ssh://github.com/ALATPay/alatpay-kotlin.git")
-//                    url.set("https://github.com/ALATPay/alatpay-kotlin.git")
-//                }
-//            }
-//        }
+//afterEvaluate {
+//    tasks.withType<org.gradle.jvm.tasks.Jar>().configureEach {
+//        archiveBaseName.set("alatpay-kotlin") // Replace with your library name
 //    }
 //}
+
+
+
 
 // Git Tag Task (Cross-Platform)
 tasks.register("publishToJitPack") {
@@ -81,7 +68,7 @@ tasks.register("publishToJitPack") {
 
         // Push the Git tag
         exec {
-            commandLine("git", "push", "origin", tagName)
+            commandLine("git", "push", "alatpay-kotlin", tagName)
         }
 
         println("Git tag created and pushed successfully: $tagName")
@@ -89,24 +76,97 @@ tasks.register("publishToJitPack") {
     }
 }
 
-apply(from = "local.gradle")
+//apply(from = "local.gradle")
 android {
+    flavorDimensions += listOf("build")
     namespace = "com.alatpay_checkout_android"
     compileSdk = 35
-
+//    defaultPublishConfig = "prodDebug" // Default to prodDebug if not specified
     defaultConfig {
         minSdk = 21
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
+    productFlavors {
+        create("prod") {
+            dimension = "build"
+            matchingFallbacks += listOf("prod") // Match the "prod" flavor of the producer
+            buildConfigField ("String", "ENV", "\"prod\"")
+            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
+            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
+            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
+            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "BASE_URL", "\"https://alatpay.ng\"")
+        }
+        create("staging") {
+            dimension = "build"
+            matchingFallbacks += listOf("staging") // Match the "staging" flavor of the producer
+            buildConfigField ("String", "ENV", "\"staging\"")
+            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
+            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
+            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
+            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "BASE_URL", "\"https://alatpay-client-sandbox.azurewebsites.net\"")
+        }
+
+        create("dev") {
+            dimension = "build"
+            matchingFallbacks += listOf("dev") // Match the "dev" flavor of the producer
+            buildConfigField ("String", "ENV", "\"dev\"")
+            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
+            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
+            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
+            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
+            buildConfigField ("String", "BASE_URL", "\"https://alatpay-client.azurewebsites.net\"")
+        }
+    }
+
     buildTypes {
+        debug {
+            isMinifyEnabled = false
+            matchingFallbacks += listOf("debug")
+        }
         release {
             isMinifyEnabled = false
+            matchingFallbacks += listOf("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+        singleVariant("prodRelease") {
+            withSourcesJar()
+            withJavadocJar()
+            withJavadocJar()
+            withJavadocJar()
+        }
+        singleVariant("prodDebug") {
+            withSourcesJar()
+            withJavadocJar()
+            withJavadocJar()
+            withJavadocJar()
         }
     }
     compileOptions {
@@ -118,12 +178,101 @@ android {
     }
 
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     kotlinOptions {
         jvmTarget = "1.8"
     }
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                // Two artifacts: the `aar` (or `jar`) and the sources
+                if (project.plugins.hasPlugin("com.android.library")) {
+                    from(components["prodDebug"])
+                } else {
+                    from(components["java"])
+                }
+
+                artifact(tasks["androidSourcesJar"])
+
+                groupId = "com.github.ALATPay"
+                artifactId = "alatpay-kotlin"
+                version = libraryVersionName
+
+                // Define POM metadata (optional, but recommended)
+                pom {
+                    name.set("ALATPay Android Kotlin SDK")
+                    description.set("A simple and efficient way to integrate ALATPay into your Android applications using the Kotlin SDK. Easily accept payments and manage transactions.")
+                    url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+                    licenses {
+                        license {
+                            name.set("The Apache License, Version 2.0")
+                            url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        }
+                    }
+                    developers {
+                        developer {
+                            id.set("ajibadeseun")
+                            name.set("Seun Ajibade")
+                            email.set("ajibadeseun@gmail.com")
+                        }
+                    }
+                    scm {
+                        connection.set("scm:git:git://github.com/ALATPay/alatpay-kotlin.git")
+                        developerConnection.set("scm:git:ssh://github.com/ALATPay/alatpay-kotlin.git")
+                        url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+                    }
+                }
+            }
+        }
+    }
+
+    tasks.named("assembleRelease") {
+        finalizedBy("publishToJitPack")
+    }
+}
+
+//publishing {
+//    publications {
+//        create<MavenPublication>("release") {
+//            from(components.findByName("prodRelease") ?: error("Component 'prodRelease' not found!"))
+//
+//            groupId = "com.github.ALATPay" // Replace with your GitHub username or organization
+//            artifactId = "alatpay-kotlin" // Replace with your repository name
+//            version = libraryVersionName // Replace with your version
+//
+//            // Define POM metadata (optional, but recommended)
+//            pom {
+//                name.set("ALATPay Android Kotlin SDK")
+//                description.set("A simple and efficient way to integrate ALATPay into your Android applications using the Kotlin SDK. Easily accept payments and manage transactions.")
+//                url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+//                licenses {
+//                    license {
+//                        name.set("The Apache License, Version 2.0")
+//                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+//                    }
+//                }
+//                developers {
+//                    developer {
+//                        id.set("ajibadeseun")
+//                        name.set("Seun Ajibade")
+//                        email.set("ajibadeseun@gmail.com")
+//                    }
+//                }
+//                scm {
+//                    connection.set("scm:git:git://github.com/ALATPay/alatpay-kotlin.git")
+//                    developerConnection.set("scm:git:ssh://github.com/ALATPay/alatpay-kotlin.git")
+//                    url.set("https://github.com/ALATPay/alatpay-kotlin.git")
+//                }
+//            }
+//        }
+//    }
+//}
+
 
 dependencies {
 
