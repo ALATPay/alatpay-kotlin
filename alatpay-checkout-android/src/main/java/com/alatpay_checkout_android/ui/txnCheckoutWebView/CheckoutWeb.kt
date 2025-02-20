@@ -52,12 +52,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat.getSystemService
-import com.alatpay_checkout_android.BuildConfig
 import com.alatpay_checkout_android.R
 import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
 import com.alatpay_checkout_android.data.models.TransactionResponse
 import com.alatpay_checkout_android.utils.constants.ALATPayConstants
+import com.alatpay_checkout_android.utils.getBaseUrl
 import com.alatpay_checkout_android.utils.getEnvironment
 import com.google.gson.Gson
 
@@ -282,7 +281,7 @@ fun CheckoutWebView(
 
 
                     loadDataWithBaseURL(
-                        BuildConfig.BASE_URL,
+                        checkoutData.environment.getBaseUrl(),
                         htmlContent,
                         "text/html",
                         "UTF-8",

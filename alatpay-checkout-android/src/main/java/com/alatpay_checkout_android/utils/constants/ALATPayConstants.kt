@@ -18,6 +18,21 @@ object ALATPayConstants {
         STAGING("staging"),
         DEV("dev")
     }
+
+    @Keep
+    enum class  CheckoutUrl @Keep constructor(val url: String){
+        DEV("https://alatpay-client.azurewebsites.net/js/alatpay.js"),
+        STAGING("https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js"),
+        PROD("https://alatpay.ng/js/alatpay.js")
+    }
+
+    @Keep
+    enum class BaseUrl @Keep constructor(val baseUrl: String){
+        DEV("https://alatpay-client.azurewebsites.net"),
+        STAGING("https://alatpay-client-sandbox.azurewebsites.net"),
+        PROD("https://alatpay.ng")
+    }
+
     @Keep
     object IntentParams {
         const val CHECKOUT_PARAMS = "Checkout Params"

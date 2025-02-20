@@ -10,7 +10,6 @@ import android.content.pm.ResolveInfo
 import android.net.ConnectivityManager
 import android.net.Uri
 import androidx.activity.result.ActivityResultLauncher
-import com.alatpay_checkout_android.BuildConfig
 import com.alatpay_checkout_android.data.models.ALATPayCheckout
 import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
 import com.alatpay_checkout_android.ui.ALATPayCheckoutActivity
@@ -45,10 +44,19 @@ internal fun ALATPayCheckoutParcel.toSerialize(): ALATPayCheckout {
 
 internal fun ALATPayConstants.Environment.getEnvironment(): String{
    return when(this){
-       ALATPayConstants.Environment.PROD -> BuildConfig.PROD_CHECKOUT_URL
-       ALATPayConstants.Environment.STAGING -> BuildConfig.STAGING_CHECKOUT_URL
-       ALATPayConstants.Environment.DEV -> BuildConfig.DEV_CHECKOUT_URL
-        else -> BuildConfig.PROD_CHECKOUT_URL
+       ALATPayConstants.Environment.PROD -> ALATPayConstants.CheckoutUrl.PROD.url
+       ALATPayConstants.Environment.STAGING ->  ALATPayConstants.CheckoutUrl.STAGING.url
+       ALATPayConstants.Environment.DEV ->  ALATPayConstants.CheckoutUrl.DEV.url
+        else ->  ALATPayConstants.CheckoutUrl.PROD.url
+    }
+}
+
+internal fun ALATPayConstants.Environment.getBaseUrl(): String{
+    return when(this){
+        ALATPayConstants.Environment.PROD -> ALATPayConstants.BaseUrl.PROD.baseUrl
+        ALATPayConstants.Environment.STAGING ->  ALATPayConstants.BaseUrl.STAGING.baseUrl
+        ALATPayConstants.Environment.DEV ->  ALATPayConstants.BaseUrl.DEV.baseUrl
+        else ->  ALATPayConstants.BaseUrl.PROD.baseUrl
     }
 }
 

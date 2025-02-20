@@ -88,85 +88,65 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
 
-    productFlavors {
-        create("prod") {
-            dimension = "build"
-            matchingFallbacks += listOf("prod") // Match the "prod" flavor of the producer
-            buildConfigField ("String", "ENV", "\"prod\"")
-            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
-            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
-            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
-            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "BASE_URL", "\"https://alatpay.ng\"")
-        }
-        create("staging") {
-            dimension = "build"
-            matchingFallbacks += listOf("staging") // Match the "staging" flavor of the producer
-            buildConfigField ("String", "ENV", "\"staging\"")
-            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
-            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
-            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
-            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "BASE_URL", "\"https://alatpay-client-sandbox.azurewebsites.net\"")
-        }
-
-        create("dev") {
-            dimension = "build"
-            matchingFallbacks += listOf("dev") // Match the "dev" flavor of the producer
-            buildConfigField ("String", "ENV", "\"dev\"")
-            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
-            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
-            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
-            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
-            buildConfigField ("String", "BASE_URL", "\"https://alatpay-client.azurewebsites.net\"")
-        }
-    }
+//    productFlavors {
+//        create("prod") {
+//            dimension = "build"
+//            matchingFallbacks += listOf("prod") // Match the "prod" flavor of the producer
+//            buildConfigField ("String", "ENV", "\"prod\"")
+//            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
+//            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
+//            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
+//            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "BASE_URL", "\"https://alatpay.ng\"")
+//        }
+//        create("staging") {
+//            dimension = "build"
+//            matchingFallbacks += listOf("staging") // Match the "staging" flavor of the producer
+//            buildConfigField ("String", "ENV", "\"staging\"")
+//            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
+//            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
+//            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
+//            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "BASE_URL", "\"https://alatpay-client-sandbox.azurewebsites.net\"")
+//        }
+//
+//        create("dev") {
+//            dimension = "build"
+//            matchingFallbacks += listOf("dev") // Match the "dev" flavor of the producer
+//            buildConfigField ("String", "ENV", "\"dev\"")
+//            buildConfigField ("String", "DEV_CHECKOUT_URL", "\"https://alatpay-client.azurewebsites.net/js/alatpay.js\"")
+//            buildConfigField ("String", "STAGING_CHECKOUT_URL", "\"https://alatpay-client-sandbox.azurewebsites.net/js/alatpay.js\"")
+//            buildConfigField ("String", "PROD_CHECKOUT_URL", "\"https://alatpay.ng/js/alatpay.js\"")
+//            buildConfigField ("String", "SIGNING_KEY_ID", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SIGNING_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SIGNING_KEY", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "OSSRH_USERNAME", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "OSSRH_PASSWORD", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "SONATYPE_STAGING_PROFILE_ID", "\"XXXXXXXXXXXXXXX\"")
+//            buildConfigField ("String", "BASE_URL", "\"https://alatpay-client.azurewebsites.net\"")
+//        }
+//    }
 
     buildTypes {
         debug {
             isMinifyEnabled = false
-            matchingFallbacks += listOf("debug")
         }
         release {
             isMinifyEnabled = false
-            matchingFallbacks += listOf("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-        }
-    }
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-        singleVariant("prodRelease") {
-            withSourcesJar()
-            withJavadocJar()
-            withJavadocJar()
-            withJavadocJar()
-        }
-        singleVariant("prodDebug") {
-            withSourcesJar()
-            withJavadocJar()
-            withJavadocJar()
-            withJavadocJar()
         }
     }
     compileOptions {
@@ -178,7 +158,6 @@ android {
     }
 
     buildFeatures {
-        buildConfig = true
         compose = true
     }
     kotlinOptions {
@@ -192,7 +171,7 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 // Two artifacts: the `aar` (or `jar`) and the sources
                 if (project.plugins.hasPlugin("com.android.library")) {
-                    from(components["prodDebug"])
+                    from(components["release"])
                 } else {
                     from(components["java"])
                 }
