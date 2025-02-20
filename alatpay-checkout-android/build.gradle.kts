@@ -210,6 +210,7 @@ afterEvaluate {
         }
     }
 
+
     tasks.named("assembleRelease") {
         finalizedBy("publishToJitPack")
     }
