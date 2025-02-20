@@ -6,7 +6,6 @@
 package com.alatpay_checkout_android.ui
 
 import androidx.lifecycle.ViewModel
-import com.alatpay_checkout_android.BuildConfig
 import com.alatpay_checkout_android.data.models.ALATPayCheckoutParcel
 import com.alatpay_checkout_android.data.models.CheckoutUrlUiState
 import com.alatpay_checkout_android.data.models.NetworkUiState
@@ -36,9 +35,9 @@ class ALATPayCheckoutViewModel constructor() : ViewModel() {
     fun updateCheckoutUrl(checkout: ALATPayCheckoutParcel) {
         _uiCheckoutUrlState.value = CheckoutUrlUiState(
             url = when(checkout.environment){
-                ALATPayConstants.Environment.DEV -> BuildConfig.DEV_CHECKOUT_URL
-                ALATPayConstants.Environment.STAGING -> BuildConfig.STAGING_CHECKOUT_URL
-                ALATPayConstants.Environment.PROD -> BuildConfig.PROD_CHECKOUT_URL
+                ALATPayConstants.Environment.DEV -> ALATPayConstants.CheckoutUrl.DEV.url
+                ALATPayConstants.Environment.STAGING -> ALATPayConstants.CheckoutUrl.STAGING.url
+                ALATPayConstants.Environment.PROD -> ALATPayConstants.CheckoutUrl.PROD.url
             },
 //            isProdEnv = checkout.isProdEnv,
             parcelData = checkout
