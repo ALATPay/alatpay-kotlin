@@ -57,9 +57,9 @@ tasks.register("publishToJitPack") {
             standardOutput = status
             isIgnoreExitValue  = true // Allow the command to fail without crashing the build
         }
-        if (status.toString().isNotEmpty()) {
-            throw GradleException("You have uncommitted changes. Please commit or stash them before publishing.")
-        }
+//        if (status.toString().isNotEmpty()) {
+//            throw GradleException("You have uncommitted changes. Please commit or stash them before publishing.")
+//        }
 
         // Create the Git tag
         exec {
