@@ -50,31 +50,37 @@ tasks.register("publishToJitPack") {
         val tagName = "v$libraryVersionName"
         println("Creating Git tag: $tagName")
 
+        // Set a default Git user identity (to avoid JitPack error)
+        exec {
+            commandLine("git", "config", "--global", "user.name", "Seun Ajibade")
+        }
+        exec {
+            commandLine("git", "config", "--global", "user.email", "ajibadeseun@gmail.com")
+        }
+
         // Check for uncommitted changes
         val status = ByteArrayOutputStream()
         exec {
             commandLine("git", "status", "--porcelain")
             standardOutput = status
-            isIgnoreExitValue  = true // Allow the command to fail without crashing the build
+            isIgnoreExitValue = true // Allow the command to fail without crashing the build
         }
-//        if (status.toString().isNotEmpty()) {
-//            throw GradleException("You have uncommitted changes. Please commit or stash them before publishing.")
-//        }
 
         // Create the Git tag
         exec {
             commandLine("git", "tag", "-a", tagName, "-m", "Release $tagName")
         }
 
-        // Push the Git tag
+        // Push the Git tag (ensure 'origin' is correct remote name)
         exec {
-            commandLine("git", "push", "alatpay-kotlin", tagName)
+            commandLine("git", "push", "origin", tagName)
         }
 
         println("Git tag created and pushed successfully: $tagName")
         println("JitPack will automatically build the library for this tag.")
     }
 }
+
 
 //apply(from = "local.gradle")
 android {
