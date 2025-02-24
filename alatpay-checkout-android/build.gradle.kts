@@ -9,31 +9,39 @@ plugins {
     id ("maven-publish")
     id("kotlin-parcelize")
     alias(libs.plugins.kotlin.serialization)
-    `maven-publish`
+//    `maven-publish`
 }
 
-tasks.register<Jar>("androidSourcesJar") {
+//tasks.register<Jar>("androidSourcesJar") {
+//    archiveClassifier.set("sources")
+//
+//    if (project.plugins.hasPlugin("com.android.library")) {
+//        // For Android libraries
+//        from(android.sourceSets["main"].java.srcDirs)
+//    } else {
+//        // For pure Kotlin libraries
+//        from(sourceSets["main"].java.srcDirs)
+//    }
+//}
+//
+//artifacts {
+//    archives(tasks["androidSourcesJar"])
+//}
+
+// Register sources JAR task
+val androidSourcesJar = tasks.register("androidSourcesJar", Jar::class) {
     archiveClassifier.set("sources")
-
-    if (project.plugins.hasPlugin("com.android.library")) {
-        // For Android libraries
-        from(android.sourceSets["main"].java.srcDirs)
-    } else {
-        // For pure Kotlin libraries
-        from(sourceSets["main"].java.srcDirs)
-    }
+    from(android.sourceSets.getByName("main").java.srcDirs)
 }
 
-artifacts {
-    archives(tasks["androidSourcesJar"])
-}
+
 
 // Versioning
 val libraryVersionName by extra { "1.0.0" } // Update this for each release
 val libraryVersionCode by extra { 1 } // Update this for each release
 
-group = "com.github.ALATPay" // Use ALATPay GitHub username here
-version = libraryVersionName // Version should be updated with each release
+//group = "com.github.ALATPay" // Use ALATPay GitHub username here
+//version = libraryVersionName // Version should be updated with each release
 
 //afterEvaluate {
 //    tasks.withType<org.gradle.jvm.tasks.Jar>().configureEach {
@@ -80,7 +88,10 @@ tasks.register("publishToJitPack") {
         println("JitPack will automatically build the library for this tag.")
     }
 }
-
+// Ensure `androidSourcesJar` runs before publishing
+tasks.withType<Jar>().configureEach {
+    mustRunAfter(androidSourcesJar)
+}
 
 //apply(from = "local.gradle")
 android {
@@ -175,6 +186,7 @@ afterEvaluate {
     publishing {
         publications {
             create<MavenPublication>("release") {
+
                 // Two artifacts: the `aar` (or `jar`) and the sources
                 if (project.plugins.hasPlugin("com.android.library")) {
                     from(components["release"])
@@ -182,11 +194,11 @@ afterEvaluate {
                     from(components["java"])
                 }
 
-//                artifact(tasks["androidSourcesJar"])
+                //artifact(androidSourcesJar)
 
                 groupId = "com.github.ALATPay"
                 artifactId = "alatpay-kotlin"
-                version = "1.0.5"
+                version = libraryVersionName
 
                 // Define POM metadata (optional, but recommended)
                 pom {
