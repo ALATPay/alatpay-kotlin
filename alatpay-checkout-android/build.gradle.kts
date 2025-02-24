@@ -182,7 +182,7 @@ afterEvaluate {
                     from(components["java"])
                 }
 
-                artifact(tasks["androidSourcesJar"])
+//                artifact(tasks["androidSourcesJar"])
 
                 groupId = "com.github.ALATPay"
                 artifactId = "alatpay-kotlin"
