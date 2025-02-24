@@ -217,9 +217,9 @@ afterEvaluate {
     }
 
 
-    tasks.named("assembleRelease") {
-        finalizedBy("publishToJitPack")
-    }
+//    tasks.named("assembleRelease") {
+//        finalizedBy("publishToJitPack")
+//    }
 }
 
 //publishing {
