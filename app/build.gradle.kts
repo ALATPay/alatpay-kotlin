@@ -68,6 +68,7 @@ dependencies {
 //   implementation("com.github.ALATPay:alatpay-kotlin:v1.0.0")
 //    implementation("com.github.ALATPay:alatpay-kotlin:seun_main-SNAPSHOT")
 //    implementation(project(":alatpay-checkout-android"))
+//    implementation ("com.github.ALATPay:alatpay-kotlin:1.0.5")
 //    implementation (project (path = ":alatpay-checkout-android", configuration = "prodDebugRuntimeElements"))
     implementation(libs.androidx.appcompat)
 //    implementation(libs.androidx.google.material)

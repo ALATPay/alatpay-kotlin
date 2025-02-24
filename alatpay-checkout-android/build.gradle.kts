@@ -186,7 +186,7 @@ afterEvaluate {
 
                 groupId = "com.github.ALATPay"
                 artifactId = "alatpay-kotlin"
-                //version = libraryVersionName
+                version = "1.0.5"
 
                 // Define POM metadata (optional, but recommended)
                 pom {
