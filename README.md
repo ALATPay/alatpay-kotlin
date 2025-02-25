@@ -13,12 +13,27 @@ Use the following test credentials to perform live transactions:
 ## Importing the AAR in Your Sample Project
 Follow these steps to integrate the ALATPay Kotlin SDK:
 
-1. Download the AAR file.
-2. Place the downloaded AAR file in the `libs` folder of your project.
-3. Reference the AAR file in your `build.gradle.kts` file as follows:
-   ```kotlin
-   implementation(files("libs/alatpay-checkout-android-prod-release.aar"))
-   ```
+1. Add the JitPack repository to your build file
+
+// Add it in your settings.gradle.kts at the end of repositories: 
+```
+dependencyResolutionManagement {
+		repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+		repositories {
+			mavenCentral()
+			maven { url = uri("https://jitpack.io") }
+		}
+	}
+```
+
+
+2. Add the dependency:
+
+```
+dependencies {
+	        implementation("com.github.ALATPay:alatpay-kotlin:1.0.0")
+	}
+```
 
 ## Implementation Guide
 Add the following code to your **MainActivity**:
